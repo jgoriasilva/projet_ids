@@ -1,0 +1,5 @@
+- {filename: 'corridor1.png', position: { x: -5.024, y: 1.019}, quaternion: {r1: 0, r2: 0, r3: 0, r4: 1}}
+- {filename: 'corridor2.png', position: { x: 2.065, y: -1.073}, quaternion: {r1: 0, r2: 0, r3: 0.827, r4: 0.562}}
+- {filename: 'corridor3.png', position: { x: 7.627, y: 1.654}, quaternion: {r1: 0, r2: 0, r3: 1.0, r4: 0}}
+- {filename: 'corridor4.png', position: { x: 2.314, y: 1.825}, quaternion: {r1: 0, r2: 0, r3: -0.862, r4: 0.507}}
+  # - {filename: 'docking.png', position: { x: 0.384, y: -0.660}, quaternion: {r1: 0, r2: 0, r3: 0.0, r4: 1.0}}
