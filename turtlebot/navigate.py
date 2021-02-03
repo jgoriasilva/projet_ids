@@ -39,63 +39,56 @@ def followroute(lock, navigator):
     except rospy.ROSInterruptException:
         rospy.loginfo("Ctrl-C caught. Quitting")
 
-def followperson(lock, navigator):
-    lock.acquire(blocking=False)
+def followperson(data, args):
+    # args[0] is lock, args[1] is navigator
+
+    args[0].acquire(blocking=False)
     
     # follow someone
+    pixel_yolo = eval(data)
+    print(type("pixel décodé", pixel_yolo)
 
-    lock.release()
+    if pixel_yolo != (-1, -1):
+        try:
+            point_camera = PointFromPixel(pixel_yolo, model)
+            p_camera = PoseStamped()
+            p_camera.header.frame_id = 'camera_link'
+            p_camera.pose.position.x = point_camera[0]
+            p_camera.pose.position.y = point_camera[1]
+            p_camera.pose.position.z = point_camera[2]
+            p_camera.pose.orientation.w = 0
+            now = rospy.Time.now()
+            p_map = listener.transformPose('map', p_camera)
+            print(p_map)
+
+        except (tf.LookupException, tf.ConnectivityException, tf.ExtrapolationException):
+            print("erreur")
+            continue
+
+        print("publie")
+        # yolo_goal.publish(p_map)
+        success = navigator.goto(p_map.pose.position, p_map.pose.orientation)
+        rate.sleep()
+
+    elif pixel_yolo == None:
+        pass
+
+    else :
+        #cancel_msg = GoalID()
+        #cancel_pub.publish(cancel_msg)
+
+        # even if it's called shutdown, should just cancel actual goal without shuting down the system
+        navigator.shutdown()
+    
+    # quand il arrive à la personne...
+    # envoyer information via serveur pour executer security4.py
+
+    args[0].release()
+
 
 
 if __name__ == '__main__':
     
-    '''
-    # Read information from yaml file
-    with open("/home/ubuntu/turtlebot/route.yaml", 'r') as stream:
-        dataMap = yaml.load(stream)
-
-    try:
-        # Initialize
-        pub = rospy.Publisher('points', Pose, queue_size=10)
-        rospy.init_node('follow_route', anonymous=False)
-        #navigator = GoToPose()
-        #camera = TakePhoto()
-        
-        while not rospy.is_shutdown():
-            for obj in dataMap:
-                
-                name = obj['filename']
-                    
-                    p = Pose()
-                    p.position.x = obj['position']['x']
-                    p.position.y = obj['position']['y']
-                    p.position.z = 0.0
-                    p.orientation.x = obj['quaternion']['r1']
-                    p.orientation.y = obj['quaternion']['r2']
-                    p.orientation.z = obj['quaternion']['r3']
-                    p.orientation.w = obj['quaternion']['r4']
-                    
-                # Navigation
-                rospy.loginfo("Going to %s pose", name[:-4])
-                navigator.goto(obj['position'], obj['quaternion'])
-
-
-                if not success:
-                    rospy.loginfo("Failed to reach %s pose", name[:-4])
-                    continue
-                rospy.loginfo("Reached %s pose", name[:-4])
-            
-                    # Take a photo
-                    if camera.take_picture(name):
-                        rospy.loginfo("Saved image " + name)
-                    else:
-                        rospy.loginfo("No images received")
-            
-                rospy.sleep(1)
-    except rospy.ROSInterruptException:
-        rospy.loginfo("Ctrl-C caught. Quitting")
-    '''
-
     lock = td.Lock()
     navigator = GoToPose()
 
@@ -105,9 +98,19 @@ if __name__ == '__main__':
     td_route.start()
     td_person.start()
 
+    rospy.init_node('test_communication')
+
+    model = PinholeCameraModel()
+    model.fromCameraInfo(cam_info)
+    
+
+    listener = tf.TransformListener()
+
+    rate = rospy.Rate(10.0)
     try:
-        while True:
-            pass
+        while not rospy.is_shutdown():
+            yolo_subscriber = rospy.Subscriber("/chatter", std_msgs.msg.String, callback=followperson, callback_args=(lock, navigator), queue_size = 10)
+
     except KeyboardInterrupt:
         td_route.join()
         td_person.join()
