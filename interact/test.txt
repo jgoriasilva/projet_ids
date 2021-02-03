@@ -1,0 +1,3 @@
+name,id number,email
+Federico Garcia,123456,federicogarciavlz@gmail.com
+Joao Goria,456789,joao-antonio.goria_silva@mines-paristech.fr
