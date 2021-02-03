@@ -41,6 +41,9 @@ class GoToPose():
         self.move_base.wait_for_server(rospy.Duration(5))
 
     def goto(self, pos, quat):
+    
+        # Cancel current goal
+        self.move_base.cancel_goal() 
 
         # Send a goal
         self.goal_sent = True

@@ -6,36 +6,49 @@ from geometry_msgs.msg import Pose, Point, Quaternion
 import threading as td
 
 # from take_photo import TakePhoto
-# from go_to_specific_point_on_map import GoToPose
+from go_to_specific_point_on_map import GoToPose
 
-def followroute:
-    with open("/home/ubuntu/turtlebot/route.yaml", 'r') as stream:
+
+def followroute(lock, navigator):
+    with open("/home/ubuntu/project_ids/turtlebot/route.yaml", 'r') as stream:
         dataMap = yaml.load(stream)
-    try:
-        navigator = GoToPose()
+    try:        
+        i = 0
         while not rospy.is_shutdown():
-            for obj in dataMap:
-                name = obj['filename']
-                
-                # Let the robot follow someone
-                while(locked):
-                    pass
+            obj = dataMap[i]
+            name = obj['filename']
+               
+            # Let the robot follow someone
+            while(lock.Locked()):
+                pass
 
-                # Navigation
-                rospy.loginfo("Following route to %s pose", name[:-4])
-                navigator.goto(obj['position'], obj['quaternion'])
-
-                if not success:
-                    rospy.loginfo("Failed to reach %s pose", name[:-4])
-                    continue
+            # Navigation
+            rospy.loginfo("Following route to %s pose", name[:-4])
+            success = navigator.goto(obj['position'], obj['quaternion'])
+            
+            if success:
                 rospy.loginfo("Reached %s pose", name[:-4])
-                
-                rospy.sleep(1)
+                i += 1
+                if (i>=len(dataMap)):
+                    i = 0
+            else:
+                rospy.loginfo("Failed to reach %s pose", name[:-4])
+                continue
+            
+            rospy.sleep(1)
+    except rospy.ROSInterruptException:
+        rospy.loginfo("Ctrl-C caught. Quitting")
 
-def followperson:
+def followperson(lock, navigator):
+    lock.acquire(blocking=False)
+    
+    # follow someone
+
+    lock.release()
 
 
 if __name__ == '__main__':
+    
     '''
     # Read information from yaml file
     with open("/home/ubuntu/turtlebot/route.yaml", 'r') as stream:
@@ -82,4 +95,19 @@ if __name__ == '__main__':
     except rospy.ROSInterruptException:
         rospy.loginfo("Ctrl-C caught. Quitting")
     '''
-    a
+
+    lock = td.Lock()
+    navigator = GoToPose()
+
+    td_route = td.Thread(target=followroute, args=(lock, navigator))
+    td_person = td.Thread(target=followperson, args = (lock, navigator))
+
+    td_route.start()
+    td_person.start()
+
+    try:
+        while True:
+            pass
+    except KeyboardInterrupt:
+        td_route.join()
+        td_person.join()
