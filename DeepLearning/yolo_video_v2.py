@@ -20,8 +20,8 @@ liste_dim = []
 liste_image = []
 liste_pers = []
 liste_im_ret = []
-hist_intermediaire = []
-image_intermediaire = []
+intermediaryHist = []
+intermediaryImage = []
 
 with open(classesFile, 'rt') as f:
     classNames = f.read().rstrip('\n').split('\n')
@@ -79,7 +79,7 @@ while True:
     outputs = net.forward(outputNames)
     res = findObjects(outputs, img)
     if res:
-        boxing(res, img, liste_pers, liste_image, liste_im_ret, hist_intermediaire, image_intermediaire, clientSocket)
+        boxing(res, img, liste_pers, liste_image, intermediaryHist, intermediaryImage, clientSocket)
         cv2.imshow('frame', img)
     cv2.waitKey(1)
     fin = time.time()

@@ -1,5 +1,17 @@
-- {filename: 'corridor1.png', position: { x: -5.024, y: 1.019}, quaternion: {r1: 0, r2: 0, r3: 0, r4: 1}}
-- {filename: 'corridor2.png', position: { x: 2.065, y: -1.073}, quaternion: {r1: 0, r2: 0, r3: 0.827, r4: 0.562}}
-- {filename: 'corridor3.png', position: { x: 7.627, y: 1.654}, quaternion: {r1: 0, r2: 0, r3: 1.0, r4: 0}}
-- {filename: 'corridor4.png', position: { x: 2.314, y: 1.825}, quaternion: {r1: 0, r2: 0, r3: -0.862, r4: 0.507}}
-  # - {filename: 'docking.png', position: { x: 0.384, y: -0.660}, quaternion: {r1: 0, r2: 0, r3: 0.0, r4: 1.0}}
+#- {filename: 'salle1.png', position: { x: -3.380, y: 3.348}, quaternion: {r1: 0, r2: 0, r3: 0.816, r4: 0.578}}
+- {filename: 'salle2.png', position: { x: -5.691, y: 7.465}, quaternion: {r1: 0, r2: 0, r3: -0.148, r4: 0.989}}
+- {filename: 'salle3.png', position: { x: 0.314, y: 9.086}, quaternion: {r1: 0, r2: 0, r3: 0.877, r4: -0.480}}
+- {filename: 'salle4.png', position: { x: 1.361, y: 4.122}, quaternion: {r1: 0, r2: 0, r3: 0.906, r4: 0.423}}
+- {filename: 'salle5.png', position: { x: -2.136, y: 6.586}, quaternion: {r1: 0, r2: 0, r3: 0.980, r4: -0.198}}
+
+# - {filename: 'corridor1.png', position: { x: -5.024, y: 1.019}, quaternion: {r1: 0, r2: 0, r3: 0, r4: 1}}
+# - {filename: 'corridor2.png', position: { x: 2.065, y: -1.073}, quaternion: {r1: 0, r2: 0, r3: 0.827, r4: 0.562}}
+# - {filename: 'corridor3.png', position: { x: 7.627, y: 1.654}, quaternion: {r1: 0, r2: 0, r3: 1.0, r4: 0}}
+# - {filename: 'corridor4.png', position: { x: 2.314, y: 1.825}, quaternion: {r1: 0, r2: 0, r3: -0.862, r4: 0.507}}
+
+  # - {filename: 'maurice1.png', position: { x: -5.024, y: 1.019}, quaternion: {r1: 0, r2: 0, r3: 0, r4: 1}}
+  # - {filename: 'maurice2.png', position: { x: 2.065, y: -1.073}, quaternion: {r1: 0, r2: 0, r3: 0.827, r4: 0.562}}
+  # - {filename: 'maurice3.png', position: { x: 7.627, y: 1.654}, quaternion: {r1: 0, r2: 0, r3: 1.0, r4: 0}}
+  # - {filename: 'maurice4.png', position: { x: 2.314, y: 1.825}, quaternion: {r1: 0, r2: 0, r3: -0.862, r4: 0.507}}
+
+  # - {filename: 'docking.png', position: { x: 3.813, y: 4.778 }, quaternion: {r1: 0, r2: 0, r3: 0.0, r4: 1.0}}
