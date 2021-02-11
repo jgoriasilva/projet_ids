@@ -71,17 +71,26 @@ def navigation_callback(data):
                 dataMap = yaml.load(stream)
                 obj = dataMap[i]
                 name = obj['filename']
+                p_ronde = PoseStamped()
+                p_ronde.header.frame_id = 'map'
+                p_ronde.pose.position.x = obj['position']['x']
+                p_ronde.pose.position.y = obj['position']['y']
+                p_ronde.pose.position.z = 0
+                p_ronde.pose.orientation.x = obj['quaternion']['r1']
+                p_ronde.pose.orientation.y = obj['quaternion']['r2']
+                p_ronde.pose.orientation.z = obj['quaternion']['r3']
+                p_ronde.pose.orientation.w = obj['quaternion']['r4']
 
-                # Let the robot follow someone
-                #while(lock.locked()):
-                #   rospy.loginfo("Im locked")
-                #rospy.sleep(1)
+                pt_loc_robot = tf_listener.transformPose('map', pt_base)
+                dist = math.sqrt((p_ronde.pose.position.x-p_loc_robot.pose.position.x)**2 + (p_ronde.pose.position.y-p_loc_robot.pose.position.y)**2 )
 
-                # Navigation
+
                 rospy.loginfo("Following route to %s pose", name[:-4])
-                success = navigator.goto(obj['position'], obj['quaternion'])
+                pub_goal.publish(p_ronde)
 
-                if success:
+
+
+                if dist < 0.2:
                     rospy.loginfo("Reached %s pose", name[:-4])
                     i += 1
                     if (i>=len(dataMap)):
@@ -106,15 +115,18 @@ def navigation_callback(data):
                 follow = False
 
         elif pixel_yolo==(-2,-2): #procédure d'identification : STOP
+            pt_loc_robot = tf_listener.transformPose('map', pt_base)
+            pub_goal.publish(p_loc_robot)
+
             if id_check.verif == None:
                 pass
 
-            elif id_check.verif == "OK":
+            elif id_check.verif == "personne identifiee":
                 detect = False
+                follow = False
 
-            elif if_check.verif == "Probleme":
+            elif if_check.verif == "personne identifiee":
                 print("ERREUR D'IDENTIFICATION")
-                detect = False
 
             else:
                 pass
@@ -135,16 +147,16 @@ def navigation_callback(data):
                 p_map.pose.orientation.z = 0
                 p_map.pose.orientation.w = 1
                 print(p_map)
-                pos = {'x': p_map.pose.position.x, 'y': p_map.pose.position.y}
-                quat = {'r1': p_map.pose.orientation.x, 'r2': p_map.pose.orientation.y, 'r3': p_map.pose.orientation.z, 'r4': p_map.pose.orientation.w}
+                #pos = {'x': p_map.pose.position.x, 'y': p_map.pose.position.y}
+                #quat = {'r1': p_map.pose.orientation.x, 'r2': p_map.pose.orientation.y, 'r3': p_map.pose.orientation.z, 'r4': p_map.pose.orientation.w}
 
             except (tf.LookupException, tf.ConnectivityException, tf.ExtrapolationException):
                 print("erreur")
                 pass
 
             print("publie")
-            # yolo_goal.publish(p_map)
-            success = navigator.goto(pos, quat)
+            pub_goal.publish(p_map)
+            #success = navigator.goto(pos, quat)
 
 
 
@@ -166,25 +178,25 @@ if __name__ == '__main__':
     id_check = ID_Check()
 
     rospy.init_node('navigate')
+    pub_goal = rospy.Publisher('move_base_simple/goal', PoseStamped, queue_size=10)
     tf_listener = tf.TransformListener()
     cmd_pub = rospy.Publisher('cmd_vel', Twist, queue_size = 1)
 
     rate = rospy.Rate(3)
 
-'''
     pt_base = PoseStamped()
     pt_base.header.frame_id = 'base_link'
     pt_base.pose.position.x = 0
     pt_base.pose.position.y = 0
     pt_base.pose.position.z = 0
-    pt_loc_robot = tf_listener.transformPose('map', pt_base)
-    sio.emit("position", {"x": pt_loc_robot.pose.position.x, "y": pt_loc_robot.pose.position.y})
-    '''
+    #pt_loc_robot = tf_listener.transformPose('map', pt_base)
+    #sio.emit("position", {"x": pt_loc_robot.pose.position.x, "y": pt_loc_robot.pose.position.y})
+
     try:
         rospy.sleep(5)
         while not rospy.is_shutdown():
             print("AAAAAAAAAAAAAAAAAAAAAAAAA")
-            identification_subscriber = rospy.Subscriber("/identificationn", std_msgs.msg.String, callback=id_check.identification_callback, queue_size = 1)
+            identification_subscriber = rospy.Subscriber("/identification", std_msgs.msg.String, callback=id_check.identification_callback, queue_size = 1)
             yolo_subscriber = rospy.Subscriber("/chatterr", std_msgs.msg.String, callback=navigation_callback, queue_size = 1)
             rate.sleep()
 
