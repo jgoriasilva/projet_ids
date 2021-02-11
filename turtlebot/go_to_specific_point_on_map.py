@@ -56,6 +56,7 @@ class GoToPose():
         # Start moving
         self.move_base.send_goal(goal)
 
+        '''
         # Allow TurtleBot up to infinity to complete task
         success = self.move_base.wait_for_result() 
 
@@ -70,6 +71,7 @@ class GoToPose():
 
         self.goal_sent = False
         return result
+        '''
 
     def shutdown(self):
         self.move_base.cancel_goal()
